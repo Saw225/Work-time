@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        تصميم احمد محاميد حاسبة ساعات الدوام و الإضافي</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0f766e;
+            --secondary-dark: #115e59;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .row .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .time-input-group {
+            display: flex;
+            gap: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        .now-btn {
+            width: auto;
+            padding: 0 12px;
+            background-color: #e2e8f0;
+            color: var(--text);
+            font-size: 0.8rem;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .now-btn:hover {
+            background-color: #cbd5e1;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .calc-only-btn {
+            background-color: var(--secondary);
+        }
+
+        .calc-only-btn:hover {
+            background-color: var(--secondary-dark);
+        }
+
+        .save-btn {
+            background-color: var(--primary);
+        }
+
+        .save-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #eff6ff;
+            border-right: 5px solid var(--primary);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+            padding-top: 8px;
+            border-top: 1px dashed #bfdbfe;
+            font-weight: bold;
+        }
+
+        .overtime-val {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .history-section {
+            margin-top: 25px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .history-header h2 {
+            font-size: 1.2rem;
+        }
+
+        .clear-btn {
+            width: auto;
+            padding: 6px 12px;
+            background-color: var(--danger);
+            font-size: 0.8rem;
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        th, td {
+            padding: 10px 5px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .delete-row {
+            color: var(--danger);
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            background: none;
+            width: auto;
+            padding: 0;
+            font-size: 1rem;
+        }
+
+        .summary-banner {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            color: #166534;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>تـــــــــصــــــــميم احـــــمــــد الــمحــاميــد
+        ⏱️ حاسبة ساعات الدوام</h1>
+
+    <div class="form-group">
+        <label for="workDate">تاريخ اليوم:</label>
+        <input type="date" id="workDate">
+    </div>
+
+    <div class="row">
+        <div class="form-group">
+            <label for="startTime">وقت البدء:</label>
+            <div class="time-input-group">
+                <input type="time" id="startTime" value="08:00">
+                <button type="button" class="now-btn" onclick="setNow('startTime')" title="الوقت الحالي">الآن</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="endTime">وقت الانتهاء:</label>
+            <div class="time-input-group">
+                <input type="time" id="endTime" value="17:00">
+                <button type="button" class="now-btn" onclick="setNow('endTime')" title="الوقت الحالي">الآن</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group">
+            <label for="standardHours">الدوام الرسمي (ساعات):</label>
+            <input type="number" id="standardHours" value="8" min="1" max="24" step="0.5">
+        </div>
+        <div class="form-group">
+            <label for="breakMinutes">وقت الاستراحة (دقائق):</label>
+            <input type="number" id="breakMinutes" value="0" min="0" step="5">
+        </div>
+    </div>
+
+    <!-- أزرار الحساب والحفظ -->
+    <div class="btn-group">
+        <button class="calc-only-btn" onclick="calculateTimeOnly()">🧮 احسب الوقت فقط</button>
+        <button class="save-btn" onclick="calculateAndSave()">💾 احسب واحفظ بالسجل</button>
+    </div>
+
+    <!-- صندوق النتيجة الفورية -->
+    <div id="resultBox" class="result-box">
+        <div class="result-item">
+            <span>إجمالي ساعات العمل الصافي:</span>
+            <span id="totalWorkedText">0</span>
+        </div>
+        <div class="result-item">
+            <span>الدوام الرسمي المطلوب:</span>
+            <span id="standardWorkedText">0</span>
+        </div>
+        <div class="result-item">
+            <span>الوقت الإضافي (Overtime):</span>
+            <span id="overtimeText" class="overtime-val">0</span>
+        </div>
+    </div>
+
+    <!-- قسم السجل -->
+    <div class="history-section">
+        <div class="history-header">
+            <h2>📋 سجل الدوام المحفوظ</h2>
+            <button class="clear-btn" onclick="clearHistory()">مسح السجل</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>التاريخ</th>
+                    <th>من - إلى</th>
+                    <th>الفعلي</th>
+                    <th>الإضافي</th>
+                    <th>حذف</th>
+                </tr>
+            </thead>
+            <tbody id="historyBody">
+                <!-- يتم ملؤه عبر الجافاسكربت -->
+            </tbody>
+        </table>
+        <div id="totalSummary" class="summary-banner">
+            إجمالي الإضافي المسجل: 0 ساعة و 0 دقيقة
+        </div>
+    </div>
+</div>
+
+<script>
+    // تعيين تاريخ اليوم تلقائياً عند فتح التطبيق
+    document.getElementById('workDate').valueAsDate = new Date();
+
+    // تحميل السجل عند بدء التشغيل
+    window.onload = loadHistory;
+
+    // دالة لتحديد الوقت الحالي بضغطة زر
+    function setNow(inputId) {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById(inputId).value = `${hours}:${minutes}`;
+    }
+
+    function formatMinutesToTime(totalMinutes) {
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = Math.round(totalMinutes % 60);
+        if (hours === 0 && minutes === 0) return "0";
+        let result = "";
+        if (hours > 0) result += `${hours} س `;
+        if (minutes > 0) result += `${minutes} د`;
+        return result.trim();
+    }
+
+    // دالة أساسية لحساب الأوقات وإرجاع القيم
+    function getCalculatedValues() {
+        const date = document.getElementById('workDate').value;
+        const start = document.getElementById('startTime').value;
+        const end = document.getElementById('endTime').value;
+        const standardHours = parseFloat(document.getElementById('standardHours').value) || 0;
+        const breakMinutes = parseInt(document.getElementById('breakMinutes').value) || 0;
+
+        if (!start || !end) {
+            alert("الرجاء إدخال وقت البدء والانتهاء.");
+            return null;
+        }
+
+        const [startH, startM] = start.split(':').map(Number);
+        const [endH, endM] = end.split(':').map(Number);
+
+        let startTotalMinutes = (startH * 60) + startM;
+        let endTotalMinutes = (endH * 60) + endM;
+
+        // دعم المناوبات الليلية
+        if (endTotalMinutes < startTotalMinutes) {
+            endTotalMinutes += 24 * 60;
+        }
+
+        let netWorkedMinutes = (endTotalMinutes - startTotalMinutes) - breakMinutes;
+        if (netWorkedMinutes < 0) netWorkedMinutes = 0;
+
+        const standardMinutes = standardHours * 60;
+
+        let overtimeMinutes = 0;
+        if (netWorkedMinutes > standardMinutes) {
+            overtimeMinutes = netWorkedMinutes - standardMinutes;
+        }
+
+        // عرض النتيجة في الصندوق
+        document.getElementById('resultBox').style.display = 'block';
+        document.getElementById('totalWorkedText').innerText = formatMinutesToTime(netWorkedMinutes);
+        document.getElementById('standardWorkedText').innerText = `${standardHours} س`;
+        document.getElementById('overtimeText').innerText = formatMinutesToTime(overtimeMinutes) || "لا يوجد";
+
+        return {
+            date,
+            start,
+            end,
+            netWorkedMinutes,
+            overtimeMinutes
+        };
+    }
+
+    // زر حساب الوقت فقط بدون حفظ
+    function calculateTimeOnly() {
+        getCalculatedValues();
+    }
+
+    // زر الحساب مع الحفظ في السجل
+    function calculateAndSave() {
+        const result = getCalculatedValues();
+        if (!result) return;
+
+        if (!result.date) {
+            alert("الرجاء إدخال التاريخ لحفظه في السجل.");
+            return;
+        }
+
+        const record = {
+            id: Date.now(),
+            ...result
+        };
+
+        const history = JSON.parse(localStorage.getItem('workHistory') || '[]');
+        history.unshift(record);
+        localStorage.setItem('workHistory', JSON.stringify(history));
+
+        loadHistory();
+    }
+
+    function loadHistory() {
+        const history = JSON.parse(localStorage.getItem('workHistory') || '[]');
+        const tbody = document.getElementById('historyBody');
+        tbody.innerHTML = '';
+
+        let totalOvertimeMinutes = 0;
+
+        history.forEach(item => {
+            totalOvertimeMinutes += item.overtimeMinutes;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${item.date}</td>
+                <td>${item.start} - ${item.end}</td>
+                <td>${formatMinutesToTime(item.netWorkedMinutes)}</td>
+                <td style="color: #16a34a; font-weight: bold;">${formatMinutesToTime(item.overtimeMinutes) || '0'}</td>
+                <td><button class="delete-row" onclick="deleteRecord(${item.id})">✖</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        const totalH = Math.floor(totalOvertimeMinutes / 60);
+        const totalM = Math.round(totalOvertimeMinutes % 60);
+        document.getElementById('totalSummary').innerText = 
+            `إجمالي الإضافي المسجل: ${totalH} ساعة و ${totalM} دقيقة`;
+    }
+
+    function deleteRecord(id) {
+        let history = JSON.parse(localStorage.getItem('workHistory') || '[]');
+        history = history.filter(item => item.id !== id);
+        localStorage.setItem('workHistory', JSON.stringify(history));
+        loadHistory();
+    }
+
+    function clearHistory() {
+        if (confirm("هل أنت متأكد من مسح جميع السجلات؟")) {
+            localStorage.removeItem('workHistory');
+            loadHistory();
+        }
+    }
+</script>
+
+</body>
+</html>
